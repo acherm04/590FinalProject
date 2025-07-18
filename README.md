@@ -8,7 +8,6 @@ uploaded = files.upload()
 
 df = pd.read_csv ("UofL_housing - Sheet1.csv")
 
-# Convert cost columns to numeric
 df['minimum cost per semester'] = df['minimum cost per semester'].replace({'\$': '', ',': ''}, regex=True).astype(float)
 df['maximum cost per semester'] = df['maximum cost per semester'].replace({'\$': '', ',': ''}, regex=True).astype(float)
 
@@ -18,7 +17,6 @@ df["text2"] = df['location'] + " is the cheapest option, priced at " + df['minim
 df["text3"] = df['location'] + " is the most expensive option, priced at " + df['maximum cost per semester'].astype(str)
 df["text4"] = df['location'] + " is a housing option for " + df['student']
 
-# Combine all text templates into a single column
 df["text"] = df.apply(lambda row: random.choice([row["text1"], row["text2"], row["text3"], row["text4"]]), axis=1)
 
 texts = df["text"].tolist()
@@ -31,10 +29,8 @@ import numpy as np
 
 model = SentenceTransformer('all-MiniLM-L6-v2')
 
-# Embed & **normalise** (unit‑length → cosine sim)
 emb = model.encode(texts, normalize_embeddings=True, convert_to_numpy=True)
 
-# Cosine‑sim index (inner‑product after normalisation)
 d = emb.shape[1]
 index = faiss.IndexFlatIP(d)
 index.add(emb.astype("float32"))
